@@ -1,4 +1,6 @@
-Flask
-PyPDF2
+flask
+pypdf2
 scikit-learn
+nltk
 reportlab
+gunicorn
