@@ -8,12 +8,23 @@ from sklearn.metrics.pairwise import cosine_similarity
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 
+# ---------------- INIT ----------------
+
 app = Flask(__name__)
 
 UPLOAD_FOLDER = "uploads"
 DATA_FILE = "data/processed_data.json"
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+# ✅ IMPORTANT FOR RENDER
+os.makedirs("uploads", exist_ok=True)
+os.makedirs("data", exist_ok=True)
+
+# create empty file if not exists
+if not os.path.exists(DATA_FILE):
+    with open(DATA_FILE, "w") as f:
+        json.dump([], f)
 
 
 # ---------------- HOME ----------------
@@ -37,10 +48,12 @@ def library_page():
 
     books = []
 
-    for f in os.listdir(UPLOAD_FOLDER):
+    if os.path.exists(UPLOAD_FOLDER):
 
-        if f.endswith(".pdf"):
-            books.append(f.replace(".pdf", ""))
+        for f in os.listdir(UPLOAD_FOLDER):
+
+            if f.endswith(".pdf"):
+                books.append(f.replace(".pdf", ""))
 
     return render_template("library.html", books=books)
 
@@ -87,7 +100,6 @@ def upload_file():
 
         lines = text.split("\n")
 
-
         for line in lines:
 
             line = line.strip()
@@ -97,7 +109,6 @@ def upload_file():
 
 
             # detect chapter
-
             if re.match(r"(?i)^chapter\s+\d+", line):
 
                 current_chapter = {
@@ -120,13 +131,18 @@ def upload_file():
                 })
 
 
+    # LOAD EXISTING DATA
+    with open(DATA_FILE, "r", encoding="utf8") as f:
+        all_books = json.load(f)
+
+    all_books.append(structured_data)
+
+    # SAVE
     with open(DATA_FILE, "w", encoding="utf8") as f:
+        json.dump(all_books, f, indent=4)
 
-        json.dump(structured_data, f, indent=4)
 
-
-    return render_template("upload.html", message="Upload successful")
-
+    return render_template("upload.html", message="Book uploaded & indexed successfully")
 
 
 # ---------------- SEARCH QUERY ----------------
@@ -137,63 +153,47 @@ def search_query():
     query = request.args.get("q")
 
     if not query:
-
         return render_template("search.html", results=None)
-
 
     start = time.time()
 
-
     with open(DATA_FILE, "r", encoding="utf8") as f:
-
-        data = json.load(f)
-
-
-    book = data["book"]
+        all_books = json.load(f)
 
 
     documents = []
-
     section_map = []
 
+    for data in all_books:
 
-    for chapter in data["chapters"]:
+        for chapter in data["chapters"]:
 
-        for sec in chapter["sections"]:
+            for sec in chapter["sections"]:
 
-            documents.append(sec["text"])
+                documents.append(sec["text"])
 
-            section_map.append({
+                section_map.append({
 
-                "chapter": chapter["chapter_title"],
-                "text": sec["text"],
-                "page": sec["page"]
+                    "book": data["book"],
+                    "chapter": chapter["chapter_title"],
+                    "text": sec["text"],
+                    "page": sec["page"]
 
-            })
+                })
 
 
     if not documents:
 
-        return render_template(
-
-            "search.html",
-            results=[],
-            query=query,
-            message="No content found"
-
-        )
+        return render_template("search.html", results=[], message="No data")
 
 
     vectorizer = TfidfVectorizer(stop_words="english")
 
     tfidf_matrix = vectorizer.fit_transform(documents)
 
-
     query_vec = vectorizer.transform([query])
 
-
     scores = cosine_similarity(query_vec, tfidf_matrix)[0]
-
 
     ranked = sorted(
 
@@ -202,7 +202,6 @@ def search_query():
         reverse=True
 
     )
-
 
     ranked = [r for r in ranked if r[1] > 0]
 
@@ -228,7 +227,6 @@ def search_query():
 
         snippet = item["text"]
 
-
         for term in query_terms:
 
             snippet = re.sub(
@@ -243,7 +241,7 @@ def search_query():
 
         results.append({
 
-            "book": book,
+            "book": item["book"],
             "chapter": item["chapter"],
             "snippet": snippet,
             "page": item["page"],
@@ -266,39 +264,6 @@ def search_query():
     )
 
 
-
-# ---------------- SUGGEST ----------------
-
-@app.route("/suggest")
-def suggest():
-
-    q = request.args.get("q","").lower()
-
-    with open(DATA_FILE,"r",encoding="utf8") as f:
-
-        data=json.load(f)
-
-
-    words=set()
-
-
-    for chapter in data["chapters"]:
-
-        for sec in chapter["sections"]:
-
-            for w in sec["text"].split():
-
-                w=re.sub(r"[^a-zA-Z]","",w).lower()
-
-                if w.startswith(q):
-
-                    words.add(w)
-
-
-    return jsonify(sorted(words)[:10])
-
-
-
 # ---------------- DOWNLOAD EXCEL ----------------
 
 @app.route("/download_excel")
@@ -311,7 +276,6 @@ def download_excel():
 
     file="results.csv"
 
-
     with open(file,"w",newline="",encoding="utf8") as f:
 
         writer=csv.writer(f)
@@ -319,22 +283,23 @@ def download_excel():
         writer.writerow(["Book","Chapter","Text","Page"])
 
 
-        for chapter in data["chapters"]:
+        for book in data:
 
-            for sec in chapter["sections"]:
+            for chapter in book["chapters"]:
 
-                writer.writerow([
+                for sec in chapter["sections"]:
 
-                    data["book"],
-                    chapter["chapter_title"],
-                    sec["text"],
-                    sec["page"]
+                    writer.writerow([
 
-                ])
+                        book["book"],
+                        chapter["chapter_title"],
+                        sec["text"],
+                        sec["page"]
+
+                    ])
 
 
     return send_file(file,as_attachment=True)
-
 
 
 # ---------------- DOWNLOAD PDF ----------------
@@ -351,20 +316,19 @@ def download_pdf():
 
     c=canvas.Canvas(file,pagesize=A4)
 
-
     y=800
 
 
-    for chapter in data["chapters"]:
+    for book in data:
 
-        c.drawString(50,y,chapter["chapter_title"])
+        c.drawString(50,y,book["book"])
 
         y-=20
 
 
-        for sec in chapter["sections"][:5]:
+        for chapter in book["chapters"]:
 
-            c.drawString(60,y,f"{sec['text']} (Page {sec['page']})")
+            c.drawString(60,y,chapter["chapter_title"])
 
             y-=20
 
@@ -377,12 +341,11 @@ def download_pdf():
 
     c.save()
 
-
     return send_file(file,as_attachment=True)
 
 
-
-# ---------------- RUN ----------------
+# ---------------- PRODUCTION RUN ----------------
 
 if __name__ == "__main__":
-    app.run(debug=True)
+
+    app.run(host="0.0.0.0", port=10000)
