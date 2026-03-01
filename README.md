@@ -46,11 +46,59 @@ The main objective is to develop a system that:
 
 ---
 
-## 📂 Project Structure
+# 🚀 Project Preview
 
-![Project Structure](project-structure.png)
+## 📤 Upload Document
+
+![Upload](images/upload.png)
+
+![Upload Book](images/upload-book.png)
+
+![Book Uploaded](images/book-uploaded.png)
+---
+
+## 📚 Library View
+
+![Library](images/library.png)
 
 ---
+
+## 🔍 Search Query Result
+
+![Query Result](images/query-result.png)
+
+---
+
+## 📖 Query Highlight Inside Book
+
+![Query in Book](images/query-in-book.png)
+
+---
+
+## ❌ No Matches Found Case
+
+![No Matches](images/no-matches-found-case.png)
+
+---
+
+## ⚙️ Automatic Chapter & Section Extraction
+
+![Extraction](images/chapter-section-extraction.png)
+
+---
+
+## ✅ Book Indexed Successfully
+
+![Book Indexed](images/book-indexed.png)
+
+---
+
+# 🗂 Project Structure
+
+![Project Structure](images/project-structure.png)
+
+---
+
 
 ## ⚙ Installation Steps
 
@@ -156,17 +204,6 @@ Ranking
 ↓  
 Display Results  
 
----
-
-## 📸 Execution Screenshots
-
-(Add screenshots here)
-
-Example:
-
-```
-![Search Page](search.png)
-```
 
 ---
 
@@ -174,11 +211,11 @@ Example:
 
 Name: Pavithra B  
 
-Course: Information Science and Engineering  
+Course: B.Tech | Information Science and Engineering | IIIrd year  
 
 College: Women’s Engineering College  
 
-Project: Flask Information Retrieval System  
+Project:  E-Book Chapter and Section Search System (Flask Information Retrieval System ) 
 
 ---
 
