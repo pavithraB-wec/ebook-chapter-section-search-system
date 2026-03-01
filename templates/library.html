@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="search-container">
+
+<h1>📚 Library</h1>
+<p>All uploaded books in your system.</p>
+
+{% if books %}
+    {% for b in books %}
+    <div class="result-card">
+        <p class="book">📘 {{ b }}</p>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>No books uploaded yet.</p>
+{% endif %}
+
+</div>
+{% endblock %}
