@@ -1,94 +1,52 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="search-container">
 
 <h1>Knowledge, Unlocked.</h1>
-<p>Search across your entire library of books instantly.</p>
+<p>Search across your uploaded books in this session.</p>
 
-<form action="/search_query" method="get">
+<form action="/search_query" method="GET">
     <input type="text" name="q" class="search-bar"
            placeholder="Search chapters and sections..."
            value="{{ query }}">
+    <button type="submit">Search</button>
 </form>
 
 {% if results is not none %}
+
     {% if results %}
-        <p class="count">Found {{ count }} relevant sections • {{ time_ms }}ms</p>
-        <div style="margin-top:10px;">
-            <a href="/download_excel?q={{ query }}"><button>Download Excel</button></a>
-            <a href="/download_pdf?q={{ query }}"><button>Download PDF</button></a>
+        <p class="count">
+            Found {{ count }} relevant sections • {{ time_ms }} ms
+        </p>
+
+        {% for r in results %}
+        <div class="result-card">
+
+            <div class="score-badge">
+                Score: {{ r.score }}
+            </div>
+
+            <p class="book">📘 {{ r.book }}</p>
+            <p class="chapter">{{ r.chapter }}</p>
+
+            <p class="snippet">
+                {{ r.snippet | safe }}
+            </p>
+
+            <p>📄 Page: {{ r.page }}</p>
+
         </div>
+        {% endfor %}
+
     {% else %}
         <div class="no-matches-box">
             <span class="no-matches-icon">🔍</span>
             <h2 class="no-matches-title">No Matches Found</h2>
             <p class="no-matches-msg">
-                {% if message %}
-                    {{ message }}
-                {% else %}
-                    The term <strong>"{{ query }}"</strong> does not appear in the uploaded book.
-                {% endif %}
+                {{ message or "Try searching with another keyword." }}
             </p>
-            <p class="no-matches-hint">Try searching with a different keyword that is related to the book's content.</p>
         </div>
     {% endif %}
+
 {% endif %}
-
-{% if message and results is none %}
-<p style="color:red; text-align:center; margin-top:20px;">{{ message }}</p>
-{% endif %}
-
-<div id="suggestions"></div>
-
-{% if results %}
-    {% for r in results %}
-    <div class="result-card">
-        <div class="score-badge"># {{ r.score }}</div>
-        <p class="book">📘 {{ r.book }}</p>
-        <p class="chapter">{{ r.chapter }}</p>
-        <p class="snippet">"{{ r.snippet | safe }}"</p>
-        <p>📄 Page: {{ r.page }}</p>
-    </div>
-    {% endfor %}
-{% endif %}
-
-</div>
-
-<script>
-const searchInput = document.querySelector(".search-bar");
-
-searchInput.addEventListener("input", async function() {
-    const q = this.value;
-    if (q.length < 2) return;
-
-    const res = await fetch(`/suggest?q=${q}`);
-    const suggestions = await res.json();
-
-    let list = document.getElementById("suggestions");
-    if (!list) {
-        list = document.createElement("div");
-        list.id = "suggestions";
-        list.style.background = "white";
-        list.style.position = "absolute";
-        list.style.width = "100%";
-        list.style.border = "1px solid #ddd";
-        searchInput.parentNode.appendChild(list);
-    }
-
-    list.innerHTML = "";
-    suggestions.forEach(s => {
-        const div = document.createElement("div");
-        div.textContent = s;
-        div.style.padding = "8px";
-        div.style.cursor = "pointer";
-        div.onclick = () => {
-            searchInput.value = s;
-            list.innerHTML = "";
-        };
-        list.appendChild(div);
-    });
-});
-</script>
 
 {% endblock %}

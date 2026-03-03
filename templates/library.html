@@ -1,20 +1,42 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="search-container">
+
+<div class="library-container">
 
 <h1>📚 Library</h1>
-<p>All uploaded books in your system.</p>
+<p>Books uploaded in this session.</p>
 
 {% if books %}
+
+<div class="book-grid">
+
     {% for b in books %}
-    <div class="result-card">
-        <p class="book">📘 {{ b }}</p>
+    <div class="book-card">
+        <div class="book-title">
+            📘 {{ b }}
+        </div>
+
+        <div class="book-actions">
+            <form action="/delete_book" method="POST">
+                <input type="hidden" name="book_name" value="{{ b }}">
+                <button type="submit" class="delete-btn">
+                    Delete
+                </button>
+            </form>
+        </div>
     </div>
     {% endfor %}
+
+</div>
+
 {% else %}
-    <p>No books uploaded yet.</p>
+    <div class="empty-library">
+        <p>No books uploaded yet.</p>
+        <p>Upload a PDF to start building your searchable library.</p>
+    </div>
 {% endif %}
 
 </div>
+
 {% endblock %}

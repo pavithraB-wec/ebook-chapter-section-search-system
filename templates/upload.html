@@ -1,79 +1,57 @@
 {% extends "base.html" %}
-
 {% block content %}
 
 <div class="main">
 
 <h1>Upload Document</h1>
-
-<p>We accept PDF files. Documents are automatically parsed into chapters and sections.</p>
-
+<p>Upload a PDF book. It will be automatically parsed into chapters and sections.</p>
 
 <!-- Upload Box -->
 <div class="upload-box">
 
-<form action="/upload_file" method="POST" enctype="multipart/form-data">
-
-<input type="file" name="file" required>
-
-<button type="submit">Start Upload ↑</button>
-
+<form action="/upload" method="POST" enctype="multipart/form-data">
+    <input type="file" name="file" required>
+    <button type="submit">Start Upload</button>
 </form>
-
 </div>
 
+
+<!-- Success / Error Message -->
+{% if message %}
+<p style="color:green; margin-top:20px;">
+    {{ message }}
+</p>
+{% endif %}
 
 
 <!-- INFO CARDS -->
 <div class="info-cards">
 
-<div class="card clickable" onclick="showInfo('indexing')">
-Automatic Indexing
-</div>
+    <div class="card clickable" onclick="showInfo('indexing')">
+        Automatic Indexing
+    </div>
 
+    <div class="card clickable" onclick="showInfo('structure')">
+        Structure Detection
+    </div>
 
-<div class="card clickable" onclick="showInfo('structure')">
-Structure Detection
-</div>
-
-
-<div class="card clickable" onclick="showInfo('storage')">
-Secure Storage
-</div>
+    <div class="card clickable" onclick="showInfo('storage')">
+        Secure Storage
+    </div>
 
 </div>
 
 
-
-<!-- MODAL POPUP -->
+<!-- MODAL -->
 <div id="infoModal" class="modal">
-
-<div class="modal-content">
-
-<span class="close" onclick="closeInfo()">&times;</span>
-
-<h2 id="modalTitle"></h2>
-
-<p id="modalText"></p>
-
+    <div class="modal-content">
+        <span class="close" onclick="closeInfo()">&times;</span>
+        <h2 id="modalTitle"></h2>
+        <p id="modalText"></p>
+    </div>
 </div>
 
 </div>
-
-
-
-{% if message %}
-
-<p style="color:green; margin-top:20px;">
-{{ message }}
-</p>
-
-{% endif %}
-
-
-
-</div>
-
 
 
 <!-- JAVASCRIPT -->
@@ -81,98 +59,53 @@ Secure Storage
 
 function showInfo(type)
 {
+    let title = "";
+    let text = "";
 
-let title = "";
+    if(type === "indexing")
+    {
+        title = "Automatic Indexing";
 
-let text = "";
+        text =
+        "Step 1: Upload PDF\n" +
+        "Step 2: Text extracted using PyPDF2\n" +
+        "Step 3: Detect chapters\n" +
+        "Step 4: Store sections with page numbers\n" +
+        "Step 5: Save to processed_data.json\n\n" +
+        "This enables fast search without reopening the PDF.";
+    }
 
+    if(type === "structure")
+    {
+        title = "Structure Detection";
 
+        text =
+        "The system detects:\n\n" +
+        "Book → Chapters → Sections\n\n" +
+        "Each chapter is identified using regex.\n" +
+        "Each line is stored with page number.";
+    }
 
-if(type == "indexing")
-{
+    if(type === "storage")
+    {
+        title = "Secure Storage";
 
-title = "Automatic Indexing";
+        text =
+        "Uploaded PDFs are stored in the uploads folder.\n\n" +
+        "Processed text is saved in data/processed_data.json.\n\n" +
+        "Data resets when server restarts.";
+    }
 
-
-text =
-"In this project, automatic indexing converts the uploaded PDF into searchable format automatically.\n\n" +
-
-"Step 1: User uploads PDF.\n" +
-
-"Step 2: Python extracts text using PyPDF2.\n" +
-
-"Step 3: Text split into sections.\n" +
-
-"Step 4: TF-IDF converts text into vectors.\n" +
-
-"Step 5: Stored in processed_data.json.\n\n" +
-
-"This allows fast search without re-reading the PDF.";
-
+    document.getElementById("modalTitle").innerText = title;
+    document.getElementById("modalText").innerText = text;
+    document.getElementById("infoModal").style.display = "block";
 }
-
-
-
-if(type == "structure")
-{
-
-title = "Structure Detection";
-
-
-text =
-"The system automatically detects structure.\n\n" +
-
-"Book → Chapters → Sections\n\n" +
-
-"Regex identifies chapters.\n" +
-
-"Each paragraph stored as section.\n\n" +
-
-"This improves search accuracy and ranking.";
-
-}
-
-
-
-if(type == "storage")
-{
-
-title = "Secure Storage";
-
-
-text =
-"The system stores files securely.\n\n" +
-
-"PDF → uploads folder\n" +
-
-"Index → data/processed_data.json\n\n" +
-
-"This enables fast and secure retrieval.";
-
-}
-
-
-
-document.getElementById("modalTitle").innerText = title;
-
-document.getElementById("modalText").innerText = text;
-
-document.getElementById("infoModal").style.display = "block";
-
-}
-
-
 
 function closeInfo()
 {
-
-document.getElementById("infoModal").style.display = "none";
-
+    document.getElementById("infoModal").style.display = "none";
 }
 
-
 </script>
-
-
 
 {% endblock %}

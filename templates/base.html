@@ -1,19 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>E-Book Chapter and Section Search System</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
+<!-- SIDEBAR -->
 <div class="sidebar">
-    <div class="logo">📘 E-Book Chapter and Section Search System</div>
 
-    <a href="/search">🔍 Search</a>
-    <a href="/library">📚 Library</a>
-    <a href="/upload">⬆ Upload</a>
+    <div class="logo">
+        📘 E-Book Search System
+    </div>
+
+    <nav>
+        <a href="/search"
+           class="{% if request.path == '/search' %}active{% endif %}">
+           🔍 Search
+        </a>
+
+        <a href="/library"
+           class="{% if request.path == '/library' %}active{% endif %}">
+           📚 Library
+        </a>
+
+        <a href="/upload"
+           class="{% if request.path == '/upload' %}active{% endif %}">
+           ⬆ Upload
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <p>Session Based System</p>
+    </div>
+
 </div>
 
+<!-- MAIN CONTENT -->
 <div class="main">
     {% block content %}{% endblock %}
 </div>
