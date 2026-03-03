@@ -7,8 +7,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = "uploads"
-DATA_FOLDER = "data"
+UPLOAD_FOLDER = "/tmp/uploads"
+DATA_FOLDER = "/tmp/data"
 DATA_FILE = os.path.join(DATA_FOLDER, "processed_data.json")
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
@@ -17,11 +17,7 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 # ===============================
 # AUTO CLEAN ON LOCAL STARTUP
 # ===============================
-if not os.environ.get("RENDER"):  
-    if os.path.exists(UPLOAD_FOLDER):
-        shutil.rmtree(UPLOAD_FOLDER)
-    if os.path.exists(DATA_FOLDER):
-        shutil.rmtree(DATA_FOLDER)
+
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(DATA_FOLDER, exist_ok=True)
