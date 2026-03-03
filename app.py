@@ -1,23 +1,26 @@
-from flask import Flask, request, render_template, redirect, url_for
-import os, json, re, time, shutil
+from flask import Flask, request, render_template, redirect, url_for, session
+from datetime import timedelta
+import os, json, re, time
 import PyPDF2
-
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 app = Flask(__name__)
 
+# =================================
+# SESSION CONFIG
+# =================================
+app.secret_key = "supersecretkey"
+app.permanent_session_lifetime = timedelta(minutes=30)
+
+# =================================
+# CONFIG (Render Safe)
+# =================================
 UPLOAD_FOLDER = "/tmp/uploads"
 DATA_FOLDER = "/tmp/data"
 DATA_FILE = os.path.join(DATA_FOLDER, "processed_data.json")
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-
-
-# ===============================
-# AUTO CLEAN ON LOCAL STARTUP
-# ===============================
-
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(DATA_FOLDER, exist_ok=True)
@@ -26,38 +29,66 @@ if not os.path.exists(DATA_FILE):
     with open(DATA_FILE, "w") as f:
         json.dump([], f)
 
-
-# ===============================
+# =================================
 # HOME
-# ===============================
+# =================================
 @app.route("/")
 def home():
     return redirect(url_for("search_page"))
 
-
-# ===============================
+# =================================
 # SEARCH PAGE
-# ===============================
+# =================================
 @app.route("/search")
 def search_page():
     return render_template("search.html", results=None)
 
-
-# ===============================
-# LIBRARY
-# ===============================
+# =================================
+# LIBRARY (SESSION BASED)
+# =================================
 @app.route("/library")
 def library_page():
-    books = []
-    for f in os.listdir(UPLOAD_FOLDER):
-        if f.endswith(".pdf"):
-            books.append(f.replace(".pdf", ""))
-    return render_template("library.html", books=books)
+    user_files = session.get("uploaded_files", [])
+    return render_template("library.html", books=user_files)
 
+# =================================
+# DELETE BOOK (SESSION SAFE)
+# =================================
+@app.route("/delete/<filename>", methods=["POST"])
+def delete_book(filename):
 
-# ===============================
+    user_files = session.get("uploaded_files", [])
+
+    if filename not in user_files:
+        return redirect(url_for("library_page"))
+
+    # Remove PDF file
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+    # Remove from JSON
+    with open(DATA_FILE, "r", encoding="utf8") as f:
+        all_books = json.load(f)
+
+    updated_books = [
+        book for book in all_books
+        if book["book"] + ".pdf" != filename
+    ]
+
+    with open(DATA_FILE, "w", encoding="utf8") as f:
+        json.dump(updated_books, f, indent=4)
+
+    # Remove from session
+    user_files.remove(filename)
+    session["uploaded_files"] = user_files
+    session.modified = True
+
+    return redirect(url_for("library_page"))
+
+# =================================
 # UPLOAD (GET + POST)
-# ===============================
+# =================================
 @app.route("/upload", methods=["GET", "POST"])
 def upload_page():
 
@@ -90,12 +121,10 @@ def upload_page():
                 lines = text.split("\n")
 
                 for line in lines:
-
                     line = line.strip()
                     if not line:
                         continue
 
-                    # FLEXIBLE CHAPTER DETECTION
                     if re.match(r"(?i)^(chapter\s+\d+|\d+\.\s+)", line):
 
                         current_chapter = {
@@ -106,12 +135,12 @@ def upload_page():
                         structured_data["chapters"].append(current_chapter)
 
                     elif current_chapter:
-
                         current_chapter["sections"].append({
                             "text": line,
                             "page": page_no
                         })
 
+            # Save structured data
             with open(DATA_FILE, "r", encoding="utf8") as f:
                 all_books = json.load(f)
 
@@ -120,6 +149,13 @@ def upload_page():
             with open(DATA_FILE, "w", encoding="utf8") as f:
                 json.dump(all_books, f, indent=4)
 
+            # Track uploaded files in session
+            if "uploaded_files" not in session:
+                session["uploaded_files"] = []
+
+            session["uploaded_files"].append(file.filename)
+            session.modified = True
+
             return render_template("upload.html", message="Book uploaded successfully")
 
         except Exception as e:
@@ -127,10 +163,9 @@ def upload_page():
 
     return render_template("upload.html")
 
-
-# ===============================
-# SEARCH QUERY (GET ONLY)
-# ===============================
+# =================================
+# SEARCH QUERY (SESSION FILTERED)
+# =================================
 @app.route("/search_query")
 def search_query():
 
@@ -147,10 +182,16 @@ def search_query():
     with open(DATA_FILE, "r", encoding="utf8") as f:
         all_books = json.load(f)
 
+    user_files = session.get("uploaded_files", [])
+
     documents = []
     section_map = []
 
     for data in all_books:
+
+        if data["book"] + ".pdf" not in user_files:
+            continue
+
         for chapter in data["chapters"]:
             for sec in chapter["sections"]:
                 documents.append(sec["text"])
@@ -211,5 +252,41 @@ def search_query():
         query=query
     )
 
+# =================================
+# CLEAR SESSION (AUTO CLEAN)
+# =================================
+@app.route("/clear_session")
+def clear_session():
+
+    user_files = session.get("uploaded_files", [])
+
+    if user_files:
+
+        with open(DATA_FILE, "r", encoding="utf8") as f:
+            all_books = json.load(f)
+
+        updated_books = []
+
+        for book in all_books:
+
+            if book["book"] + ".pdf" in user_files:
+
+                file_path = os.path.join(UPLOAD_FOLDER, book["book"] + ".pdf")
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+
+            else:
+                updated_books.append(book)
+
+        with open(DATA_FILE, "w", encoding="utf8") as f:
+            json.dump(updated_books, f, indent=4)
+
+    session.clear()
+
+    return redirect(url_for("upload_page"))
+
+# =================================
+# RUN
+# =================================
 if __name__ == "__main__":
     app.run(debug=True)

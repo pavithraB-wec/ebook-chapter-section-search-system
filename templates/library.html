@@ -11,22 +11,15 @@
 
 <div class="book-grid">
 
-    {% for b in books %}
-    <div class="book-card">
-        <div class="book-title">
-            📘 {{ b }}
-        </div>
+    {% for book in books %}
+<div>
+    <p>{{ book }}</p>
 
-        <div class="book-actions">
-            <form action="/delete_book" method="POST">
-                <input type="hidden" name="book_name" value="{{ b }}">
-                <button type="submit" class="delete-btn">
-                    Delete
-                </button>
-            </form>
-        </div>
-    </div>
-    {% endfor %}
+    <form action="{{ url_for('delete_book', filename=book) }}" method="POST">
+        <button type="submit">Delete</button>
+    </form>
+</div>
+{% endfor %}
 
 </div>
 
