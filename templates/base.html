@@ -3,48 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <title>E-Book Chapter and Section Search System</title>
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
+    <!-- Background Effects -->
+    <div class="ambient-light"></div>
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#logo-gradient)" stroke="url(#logo-gradient)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="url(#logo-gradient)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="url(#logo-gradient)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="logo-gradient" x1="2" y1="12" x2="22" y2="12" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#6366f1"/>
+                                <stop offset="1" stop-color="#8b5cf6"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <span class="logo-text">E-Book Search</span>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="/search" class="nav-item {% if request.path == '/search' %}active{% endif %}">
+                <div class="nav-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </div>
+                <span>Search</span>
+                {% if request.path == '/search' %}
+                <div class="active-indicator"></div>
+                {% endif %}
+            </a>
+            
+            <a href="/library" class="nav-item {% if request.path == '/library' %}active{% endif %}">
+                <div class="nav-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m19 11-8-8-8 8"></path>
+                        <path d="M5 19h14a2 2 0 0 0 2-2v-6"></path>
+                        <path d="M12 13V3"></path>
+                        <path d="M12 13 4.5 20.5"></path>
+                        <path d="M12 13 19.5 20.5"></path>
+                    </svg>
+                </div>
+                <span>Library</span>
+                {% if request.path == '/library' %}
+                <div class="active-indicator"></div>
+                {% endif %}
+            </a>
+            
+            <a href="/upload" class="nav-item {% if request.path == '/upload' %}active{% endif %}">
+                <div class="nav-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3v12"></path>
+                        <path d="m17 8-5-5-5 5"></path>
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    </svg>
+                </div>
+                <span>Upload</span>
+                {% if request.path == '/upload' %}
+                <div class="active-indicator"></div>
+                {% endif %}
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="session-badge">
+                <div class="pulse-dot"></div>
+                <span>Session Active</span>
+            </div>
+        </div>
+    </aside>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        <div class="mobile-logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#mobile-logo-gradient)" stroke="url(#mobile-logo-gradient)" stroke-width="2"/>
+                <defs>
+                    <linearGradient id="mobile-logo-gradient" x1="2" y1="12" x2="22" y2="12">
+                        <stop stop-color="#6366f1"/>
+                        <stop offset="1" stop-color="#8b5cf6"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span>E-Book Search</span>
+        </div>
+        <button class="menu-toggle" onclick="toggleMobileMenu()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+    </header>
 
-    <div class="logo">
-        📘 E-Book Search System
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="/search" class="mobile-nav-item {% if request.path == '/search' %}active{% endif %}">Search</a>
+        <a href="/library" class="mobile-nav-item {% if request.path == '/library' %}active{% endif %}">Library</a>
+        <a href="/upload" class="mobile-nav-item {% if request.path == '/upload' %}active{% endif %}">Upload</a>
     </div>
 
-    <nav>
-        <a href="/search"
-           class="{% if request.path == '/search' %}active{% endif %}">
-           🔍 Search
-        </a>
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
 
-        <a href="/library"
-           class="{% if request.path == '/library' %}active{% endif %}">
-           📚 Library
-        </a>
-
-        <a href="/upload"
-           class="{% if request.path == '/upload' %}active{% endif %}">
-           ⬆ Upload
-        </a>
-    </nav>
-
-    <div class="sidebar-footer">
-        <p>Session Based System</p>
-    </div>
-
-</div>
-
-<!-- MAIN CONTENT -->
-<div class="main">
-    {% block content %}{% endblock %}
-</div>
-
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('open');
+        }
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('mobileMenu');
+            const toggle = document.querySelector('.menu-toggle');
+            if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+                menu.classList.remove('open');
+            }
+        });
+    </script>
 </body>
 </html>

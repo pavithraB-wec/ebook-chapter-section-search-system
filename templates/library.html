@@ -1,35 +1,119 @@
 {% extends "base.html" %}
-
 {% block content %}
-
 <div class="library-container">
-
-<h1>📚 Library</h1>
-<p>Books uploaded in this session.</p>
-
-{% if books %}
-
-<div class="book-grid">
-
-    {% for book in books %}
-<div>
-    <p>{{ book }}</p>
-
-    <form action="{{ url_for('delete_book', filename=book) }}" method="POST">
-        <button type="submit">Delete</button>
-    </form>
-</div>
-{% endfor %}
-
-</div>
-
-{% else %}
-    <div class="empty-library">
-        <p>No books uploaded yet.</p>
-        <p>Upload a PDF to start building your searchable library.</p>
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-badge library-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m19 11-8-8-8 8"></path>
+                <path d="M5 19h14a2 2 0 0 0 2-2v-6"></path>
+                <path d="M12 13V3"></path>
+                <path d="M12 13 4.5 20.5"></path>
+                <path d="M12 13 19.5 20.5"></path>
+            </svg>
+        </div>
+        <h1 class="page-title">Your Library</h1>
+        <p class="page-subtitle">Manage your uploaded documents</p>
     </div>
-{% endif %}
 
+    {% if books %}
+    <!-- Stats Bar -->
+    <div class="library-stats">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ books|length }}</span>
+                <span class="stat-label">Documents</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">Session</span>
+                <span class="stat-label">Active</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Books Grid -->
+    <div class="books-grid">
+        {% for book in books %}
+        <div class="book-card" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+            <div class="card-shine"></div>
+            <div class="book-cover">
+                <div class="cover-pattern"></div>
+                <div class="cover-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                </div>
+                <div class="cover-glow"></div>
+            </div>
+            <div class="book-info">
+                <h3 class="book-title">{{ book }}</h3>
+                <p class="book-meta">PDF Document</p>
+            </div>
+            <div class="book-actions">
+                <form action="{{ url_for('delete_book', filename=book) }}" method="POST" class="delete-form">
+                    <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this document?')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        <span>Remove</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Add More -->
+    <div class="add-more-section">
+        <a href="/upload" class="add-more-card">
+            <div class="add-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </div>
+            <span>Add Document</span>
+        </a>
+    </div>
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="library-empty">
+        <div class="empty-illustration">
+            <div class="shelf">
+                <div class="shelf-line"></div>
+                <div class="floating-book book-1"></div>
+                <div class="floating-book book-2"></div>
+                <div class="floating-book book-3"></div>
+            </div>
+        </div>
+        <h2 class="empty-title">Your library is empty</h2>
+        <p class="empty-message">Upload your first PDF to start building your searchable collection</p>
+        <a href="/upload" class="btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 3v12"></path>
+                <path d="m17 8-5-5-5 5"></path>
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            </svg>
+            Upload First Document
+        </a>
+    </div>
+    {% endif %}
 </div>
-
 {% endblock %}

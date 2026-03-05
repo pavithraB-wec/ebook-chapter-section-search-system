@@ -1,52 +1,155 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="search-container">
+    <!-- Hero Section -->
+    <div class="search-hero">
+        <h1 class="hero-title">Knowledge, <span class="gradient-text">Unlocked.</span></h1>
+        <p class="hero-subtitle">Search across your uploaded books with intelligent chapter and section detection</p>
+    </div>
 
-<h1>Knowledge, Unlocked.</h1>
-<p>Search across your uploaded books in this session.</p>
+    <!-- Search Box -->
+    <div class="search-box-wrapper">
+        <form action="/search_query" method="GET" class="search-form">
+            <div class="search-input-container">
+                <div class="search-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </div>
+                <input
+                    type="text"
+                    name="q"
+                    class="search-input"
+                    placeholder="Search chapters, sections, or topics..."
+                    value="{{ query }}"
+                    autocomplete="off"
+                >
+            </div>
+            <button type="submit" class="search-button">
+                <span>Search</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14"></path>
+                    <path d="m12 5 7 7-7 7"></path>
+                </svg>
+            </button>
+        </form>
+    </div>
 
-<form action="/search_query" method="GET">
-    <input type="text" name="q" class="search-bar"
-           placeholder="Search chapters and sections..."
-           value="{{ query }}">
-    <button type="submit">Search</button>
-</form>
-
-{% if results is not none %}
-
-    {% if results %}
-        <p class="count">
-            Found {{ count }} relevant sections • {{ time_ms }} ms
-        </p>
-
-        {% for r in results %}
-        <div class="result-card">
-
-            <div class="score-badge">
-                Score: {{ r.score }}
+    <!-- Results Section -->
+    {% if results is not none %}
+    <div class="results-container">
+        {% if results %}
+            <!-- Results Header -->
+            <div class="results-header">
+                <div class="results-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">{{ count }}</span>
+                        <span class="stat-label">sections found</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-value">{{ time_ms }}ms</span>
+                        <span class="stat-label">search time</span>
+                    </div>
+                </div>
             </div>
 
-            <p class="book">📘 {{ r.book }}</p>
-            <p class="chapter">{{ r.chapter }}</p>
+            <!-- Results Grid -->
+            <div class="results-grid">
+                {% for r in results %}
+                <article class="result-card" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+                    <div class="card-glow"></div>
+                    <div class="result-header">
+                        <div class="book-badge">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                            <span>{{ r.book }}</span>
+                        </div>
+                        <div class="relevance-score">
+                            <div class="score-ring">
+                                <svg viewBox="0 0 36 36">
+                                    <path class="score-ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path class="score-ring-fill" stroke-dasharray="{{ (r.score * 100) | int }}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                </svg>
+                                <span class="score-value">{{ "%.0f" | format(r.score * 100) }}%</span>
+                            </div>
+                        </div>
+                    </div>
 
-            <p class="snippet">
-                {{ r.snippet | safe }}
-            </p>
+                    <div class="result-content">
+                        <h3 class="chapter-title">{{ r.chapter }}</h3>
+                        <div class="snippet-box">
+                            <div class="snippet-highlight"></div>
+                            <p class="snippet-text">{{ r.snippet | safe }}</p>
+                        </div>
+                    </div>
 
-            <p>📄 Page: {{ r.page }}</p>
-
-        </div>
-        {% endfor %}
-
-    {% else %}
-        <div class="no-matches-box">
-            <span class="no-matches-icon">🔍</span>
-            <h2 class="no-matches-title">No Matches Found</h2>
-            <p class="no-matches-msg">
-                {{ message or "Try searching with another keyword." }}
-            </p>
-        </div>
+                    <div class="result-footer">
+                        <div class="page-indicator">
+                            <div class="page-icon">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                            </div>
+                            <span>Page {{ r.page }}</span>
+                        </div>
+                        <a class="view-btn" href="{{ url_for('view_book', filename=r.book ~ '.pdf') }}#page={{ r.page }}" target="_blank" rel="noopener noreferrer">
+                            <span>View Section</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <line x1="10" y1="14" x2="21" y2="3"></line>
+                            </svg>
+                        </a>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="empty-state">
+                <div class="empty-illustration">
+                    <div class="search-ring ring-1"></div>
+                    <div class="search-ring ring-2"></div>
+                    <div class="search-icon-large">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </div>
+                </div>
+                <h2 class="empty-title">No matches found</h2>
+                <p class="empty-message">{{ message or "Try adjusting your search terms or upload more documents to expand your library." }}</p>
+                <div class="empty-actions">
+                    <a href="/upload" class="btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 3v12"></path>
+                            <path d="m17 8-5-5-5 5"></path>
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        </svg>
+                        Upload Document
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
     {% endif %}
+</div>
 
-{% endif %}
-
+<script>
+    // Focus search input on load if empty
+    window.addEventListener('load', function() {
+        const input = document.querySelector('.search-input');
+        if (!input.value) {
+            input.focus();
+        }
+    });
+</script>
 {% endblock %}
