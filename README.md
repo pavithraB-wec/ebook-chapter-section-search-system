@@ -1,9 +1,5 @@
 # 📚 E-Book Chapter and Section Search System
 
----
-
-## 📌 Project Description
-
 The **E-Book Chapter and Section Search System** is a Flask-based Information Retrieval (IR) application that allows users to upload PDF books and perform intelligent search at the **chapter and section level**.
 
 The system processes uploaded books, extracts textual content, and applies Information Retrieval techniques to find the most relevant sections for a given user query.
@@ -18,8 +14,6 @@ The system implements:
 
 to retrieve highly relevant sections from uploaded books.
 
----
-
 ## 🎯 Objective of the Application
 
 The main objective of this system is to create an intelligent search platform that can:
@@ -32,8 +26,6 @@ The main objective of this system is to create an intelligent search platform th
 • Rank results based on similarity score  
 • Highlight query terms inside results  
 • Display corresponding page numbers  
-
----
 
 ## 🛠 Tools and Technologies Used
 
@@ -50,7 +42,32 @@ The main objective of this system is to create an intelligent search platform th
 | GitHub | Project Repository |
 | Render | Cloud Deployment |
 
+## 🛠 Tech Stack
+
+### Backend
+| Technology | Purpose | Version |
+|------------|---------|---------|
+| ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white) | Core Language | 3.12+ |
+| ![Flask](https://img.shields.io/badge/Flask-000000?logo=flask&logoColor=white) | Web Framework | 2.0+ |
+| ![PyPDF2](https://img.shields.io/badge/PyPDF2-FF6B6B?logo=adobeacrobatreader&logoColor=white) | PDF Text Extraction | Latest |
+| ![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?logo=scikit-learn&logoColor=white) | TF-IDF & Similarity | Latest |
+
+### Frontend
+| Technology | Purpose |
+|------------|---------|
+| ![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white) | Structure |
+| ![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white) | Styling (Glassmorphism) |
+| ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black) | Interactions |
+
+### Infrastructure
+| Technology | Purpose |
+|------------|---------|
+| ![Render](https://img.shields.io/badge/Render-46E3B7?logo=render&logoColor=white) | Cloud Deployment |
+| ![Git](https://img.shields.io/badge/Git-F05032?logo=git&logoColor=white) | Version Control |
+| ![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white) | Repository Hosting |
+
 ---
+
 
 # 🚀 Project Preview
 
@@ -274,6 +291,8 @@ Display Relevant Sections
 
 The project is deployed online using **Render**.
 
+https://ebook-chapter-section-search-system.onrender.com
+
 Users can upload books and search within their own session.
 
 ---
@@ -281,6 +300,12 @@ Users can upload books and search within their own session.
 # 👩‍💻 Author
 
 **Name:** Pavithra B  
+
+**Teammate:**  Monika A
+
+             Ranjini J
+
+             Tanushri V
 
 **Course:** B.Tech – Information Science and Engineering  
 
