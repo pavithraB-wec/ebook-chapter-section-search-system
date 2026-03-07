@@ -29,21 +29,6 @@ The main objective of this system is to create an intelligent search platform th
 
 ## 🛠 Tools and Technologies Used
 
-| Tool | Purpose |
-|-----|---------|
-| Python | Programming Language |
-| Flask | Web Application Framework |
-| PyPDF2 | PDF Text Extraction |
-| Scikit-learn | TF-IDF & Cosine Similarity |
-| HTML | Web Interface |
-| CSS | Styling |
-| JSON | Data Storage |
-| Git | Version Control |
-| GitHub | Project Repository |
-| Render | Cloud Deployment |
-
-## 🛠 Tech Stack
-
 ### Backend
 | Technology | Purpose | Version |
 |------------|---------|---------|
@@ -68,6 +53,72 @@ The main objective of this system is to create an intelligent search platform th
 
 ---
 
+## 🙏 Acknowledgements
+
+### Academic
+This project is built upon the hard work, support, and encouragement of many individuals and institutions. We would like to express our sincere gratitude to:
+
+- **Women's Engineering College, Lawspet** — For providing a supportive academic environment and the necessary resources to develop and complete this project.
+- **Information Science Department** — For providing guidance and foundational knowledge in Information Retrieval concepts and methodologies.
+- **Saravanan S** — For valuable mentorship, continuous encouragement, and technical guidance throughout the development of this project.
+- **Teammates** — Monika, Ranjini, and Tanushri for their collaboration, ideas, discussions, and contributions during the project development.
+
+### Open Source
+This project also benefits from several excellent open-source tools and libraries:
+
+- [Flask](https://flask.palletsprojects.com/) — Lightweight web framework used to build the application.
+- [scikit-learn](https://scikit-learn.org/) — Used for implementing TF-IDF vectorization and similarity calculations.
+- [PyPDF2](https://pypdf2.readthedocs.io/) — Used for extracting and processing text from PDF documents.
+
+### Additional Thanks
+We would also like to thank the open-source developer community for creating and maintaining powerful tools that make projects like this possible.
+
+# 👩‍💻 Author
+
+- [@pavithraB-wec](https://www.github.com/pavithraB-wec)
+
+**Name:** Pavithra B  
+
+**Course:** B.Tech – Information Science and Engineering  
+
+**Year:** III Year  
+
+**College:** Women’s Engineering College  
+
+**Project Title:**  
+E-Book Chapter and Section Search System  
+(Flask-Based Information Retrieval System)
+
+---
+
+## 🎨 Color Reference
+
+The UI follows a modern **dark gradient theme** with purple and blue accent colors to create a clean and focused reading/search experience.
+
+| Color Role | Hex Code |
+|------------|----------|
+| Primary Gradient Start | #0F172A |
+| Primary Gradient End | #4F46E5 |
+| Sidebar Background | #111827 |
+| Card / Panel Background | #1F2937 |
+| Accent Purple | #8B5CF6 |
+| Accent Pink | #EC4899 |
+| Button Gradient | #6366F1 → #A855F7 |
+| Success / Status | #10B981 |
+| Text Primary | #F9FAFB |
+| Text Secondary | #9CA3AF |
+
+---
+
+# 🌐 Live Demo
+
+The project is deployed online using **Render**.
+
+https://ebook-chapter-section-search-system.onrender.com
+
+Users can upload books and search within their own session.
+
+---
 
 # 🚀 Project Preview
 
@@ -284,39 +335,6 @@ Rank Results
      ↓
 Display Relevant Sections
 ```
-
----
-
-# 🌐 Live Application
-
-The project is deployed online using **Render**.
-
-https://ebook-chapter-section-search-system.onrender.com
-
-Users can upload books and search within their own session.
-
----
-
-# 👩‍💻 Author
-
-**Name:** Pavithra B  
-
-**Teammate:**  Monika A
-
-             Ranjini J
-
-             Tanushri V
-
-**Course:** B.Tech – Information Science and Engineering  
-
-**Year:** III Year  
-
-**College:** Women’s Engineering College  
-
-**Project Title:**  
-E-Book Chapter and Section Search System  
-(Flask-Based Information Retrieval System)
-
 ---
 
 # 📌 GitHub Repository
@@ -327,6 +345,33 @@ https://github.com/pavithraB-wec/ebook-chapter-section-search-system
 
 ---
 
+## ❓ FAQ
+
+### 1. What is the E-Book Chapter & Section Search System?
+It is a web-based application that allows users to upload PDF books and search for specific chapters, sections, or topics using Information Retrieval techniques.
+
+### 2. What types of files can be uploaded?
+Currently, the system supports **PDF files** for indexing and searching.
+
+### 3. How does the search work?
+The system extracts text from uploaded PDFs and applies **TF-IDF vectorization and cosine similarity** to match the user's query with the most relevant chapters or sections.
+
+### 4. Can I upload multiple documents?
+Yes, users can upload multiple PDF documents and manage them through the **Library section**.
+
+### 5. Is the search fast?
+Yes. The system uses optimized text indexing methods, allowing search results to be retrieved in **milliseconds**.
+
+### 6. What technologies are used in this project?
+The system is built using **Python, Flask, scikit-learn, PyPDF2, HTML, CSS, and JavaScript**.
+
+### 7. Where is the project hosted?
+The application is deployed on **Render**, allowing users to access it online.
+
+### 8. Can this system be extended in the future?
+Yes. Future improvements may include **semantic search, user authentication, and RAG-based ranking (like DeepRAG)** for better explanations of search results.
+
+---
 # ⭐ Conclusion
 
 This project demonstrates a real-world implementation of **Information Retrieval techniques** using Flask, TF-IDF, and Cosine Similarity to perform efficient chapter and section-level search in E-Books.
