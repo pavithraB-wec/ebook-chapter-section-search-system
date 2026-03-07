@@ -134,13 +134,19 @@ Users can upload books and search within their own session.
 
 ## 📚 Library View
 
+![Initial Library](images/initial-library.png)
+
 ![Library](images/library.png)
+
+![Library with 2 Books](images/library-2-book.png)
 
 ---
 
 ## 🔍 Search Query Result
 
 ![Query Result](images/query-result.png)
+
+![Query Result 2](images/result2.png)
 
 ---
 
@@ -168,12 +174,29 @@ Users can upload books and search within their own session.
 
 ---
 
+# 🏗 System Architecture
+
+![Architecture](images/Architecture.png)
+
+---
+
+# 🔄 System Flowchart
+
+![Flowchart](images/flowchart.png)
+
+---
+
+# 🔁 Data Flow Diagram
+
+![Data Flow](images/Data-flow.png)
+
+---
+
 # 🗂 Project Structure
 
 ![Project Structure](images/project-structure.png)
 
 ---
-
 # ⚙ Installation Steps
 
 ### Step 1: Clone Repository
